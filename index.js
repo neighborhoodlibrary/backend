@@ -32,6 +32,9 @@ server.post("/email", async (req, res) => {
   if (!msg.text) {
     return res.status(400).json({ error: "Must provide text body." });
   }
+  if (!msg.html) {
+    return res.status(400).json({ error: "Must provide html body." });
+  }
   try {
     const response = sgMail.send({ ...msg });
     res.status(201).json("Email sent");
