@@ -81,6 +81,46 @@ server.post("/goodreads", async (req, res) => {
   }
 });
 
+server.post("/grdetails", async (req, res) => {
+  const { bookId } = req.body;
+  if (!bookId) {
+    return res.status(400).json({ error: "Must provide bookId" });
+  }
+  try {
+    let grUrl = "https://goodreads.com/book/show/";
+    let grKey = `key=${goodreadsKey}`;
+    let grId = `${bookId}`;
+    let grURL = `${grUrl}${grId}?${grKey}`;
+
+    let grRes = await rp(grURL)
+      .then(res => {
+        resReturn = {};
+        parseString(res, (err, result) => {
+          resReturn.isbn = result.GoodreadsResponse.book[0].isbn;
+          resReturn.isbn13 = result.GoodreadsResponse.book[0].isbn13;
+          resReturn.image_url = result.GoodreadsResponse.book[0].image_url;
+          resReturn.publisher = result.GoodreadsResponse.book[0].publisher;
+          resReturn.description = result.GoodreadsResponse.book[0].description;
+          resReturn.num_pages = result.GoodreadsResponse.book[0].num_pages;
+          resReturn.language_code =
+            result.GoodreadsResponse.book[0].language_code;
+          resReturn.authors = result.GoodreadsResponse.book[0].authors;
+          resReturn.title = result.GoodreadsResponse.book[0].title;
+        });
+        return resReturn;
+        //
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    res.status(200).json(grRes);
+  } catch (error) {
+    res.status(500).json({
+      error: "There was a problem sending requests to the goodreads show api"
+    });
+  }
+});
+
 //
 const PORT = process.env.PORT || 9500;
 server.listen(PORT, () => console.log("API running..."));
