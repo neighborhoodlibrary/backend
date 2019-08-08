@@ -96,19 +96,21 @@ server.post("/grdetails", async (req, res) => {
       .then(res => {
         resReturn = {};
         parseString(res, (err, result) => {
+          resReturn.description = result.GoodreadsResponse.book[0].description;
           resReturn.isbn = result.GoodreadsResponse.book[0].isbn;
           resReturn.isbn13 = result.GoodreadsResponse.book[0].isbn13;
-          resReturn.image_url = result.GoodreadsResponse.book[0].image_url;
-          resReturn.publisher = result.GoodreadsResponse.book[0].publisher;
-          resReturn.description = result.GoodreadsResponse.book[0].description;
-          resReturn.num_pages = result.GoodreadsResponse.book[0].num_pages;
           resReturn.language_code =
             result.GoodreadsResponse.book[0].language_code;
-          resReturn.authors = result.GoodreadsResponse.book[0].authors;
-          resReturn.title = result.GoodreadsResponse.book[0].title;
+          resReturn.num_pages = result.GoodreadsResponse.book[0].num_pages;
+          resReturn.publication_day =
+            result.GoodreadsResponse.book[0].publication_day;
+          resReturn.publication_month =
+            result.GoodreadsResponse.book[0].publication_month;
+          resReturn.publication_year =
+            result.GoodreadsResponse.book[0].publication_year;
+          resReturn.publisher = result.GoodreadsResponse.book[0].publisher;
         });
         return resReturn;
-        //
       })
       .catch(error => {
         console.log(error);
@@ -121,7 +123,6 @@ server.post("/grdetails", async (req, res) => {
   }
 });
 
-//
 const PORT = process.env.PORT || 9500;
 server.listen(PORT, () => console.log("API running..."));
 module.exports = { server };
